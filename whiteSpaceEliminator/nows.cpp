@@ -14,6 +14,11 @@
 
 using namespace std;
 
+/**
+ * calculates and returns the length of a string
+ */
+inline int stringlength(char *word);
+
 int main(int argc, char *argv[])
 {
     // ensure proper usage
@@ -32,9 +37,7 @@ int main(int argc, char *argv[])
     }
 
     // length of file name
-    int length = 0;
-    while(argv[1][length] != '\0')
-        length++;
+    int length = stringlength(argv[1]);
 
     char newName[4 + length];
     strcpy(newName, "new_");
@@ -62,4 +65,17 @@ int main(int argc, char *argv[])
 
     // success
     return 0;
+}
+
+/**
+ * calculates and returns the length of a string
+ */
+inline int stringlength(char *word)
+{
+    int length = 0;
+
+    while (word[length] != '\0')
+        length++;
+
+    return length;
 }
