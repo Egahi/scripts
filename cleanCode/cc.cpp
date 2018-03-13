@@ -10,9 +10,13 @@
 
 #include <iostream>
 #include <fstream>
+#include <cstring>
 
 using namespace std;
 
+/**
+ * calculates and returns the length of a string
+ */
 inline int stringlength(char *word);
 
 int main(int argc, char *argv[])
@@ -31,11 +35,11 @@ int main(int argc, char *argv[])
         return 2;
     }
 
-    int length = stringlength(agrv[1]);
+    int length = stringlength(argv[1]);
 
     char newName[4 + length];
     strcpy(newName, "new_");
-    strcat(newName, agrv[1]);
+    strcat(newName, argv[1]);
 
     ofstream output (newName);
     if (!output)
@@ -44,18 +48,33 @@ int main(int argc, char *argv[])
         return 3;
     }
 
-    char line[80];
+    // temporary character buffer
+    char line;
+    int counter = 0;
 
-    while (infile >> line)
-        outfile << line;
+    // read one character at a time
+    while (input >> line)
+    {
+        if (counter >= 80)
+        {
+            output << "\n";
+            counter = 0;
+        }
 
-    infile.close();
-    outfile.close();
+        output << line;
+        counter++;
+    }
+
+    input.close();
+    output.close();
 
     // success
     return 0;
 }
 
+/**
+ * calculates and returns the length of a string
+ */
 inline int stringlength(char *word)
 {
     int length = 0;
