@@ -49,19 +49,112 @@ int main(int argc, char *argv[])
     }
 
     // temporary character buffer
-    char line;
+    char c;
     int counter = 0;
+    int tab = 0;
 
     // read one character at a time
-    while (input >> line)
+    while (input >> c)
     {
-        if (counter >= 80)
+        if (counter >= 80 || c == '#')
         {
             output << "\n";
+            output << c;
             counter = 0;
         }
 
-        output << line;
+        else if (c == '{' || c == '}')
+        {
+            if (c == '{')
+            {
+                output << "\n";
+                tab++;
+            }
+
+            else
+            {
+                tab--;
+            }
+
+            output << c;
+            output << "\n";
+
+            for (int i = 0, j = tab * 4; i < j; i++)
+            {
+                output << " ";
+            }
+
+            counter = 0;
+        }
+
+        else if (c == '>' || c == ';')
+        {
+            output << c;
+            output << "\n";
+
+            if (c == ';')
+            {
+                for (int i = 0, j = tab * 4; i < j; i++)
+                {
+                    output << " ";
+                }
+            }
+
+            counter = 0;
+        }
+
+        else if (c == '/')
+        {
+            char temp = c;
+            input >> c;
+            if (c == '/')
+            {
+                output << "\n";
+                output << temp << c << " ";
+            }
+
+            else if (c == '*')
+            {
+                output << "\n";
+                output << temp << c << " \n" << "* ";
+            }
+
+            else
+            {
+                output << c;
+            }
+
+            counter = 0;
+        }
+
+        else if (c == '*')
+        {
+            char temp = c;
+            input >> c;
+            if (c == '/')
+            {
+                output << "\n";
+                output << temp << c << "\n";
+            }
+
+            else
+            {
+                output << c;
+            }
+
+            counter = 0;
+        }
+
+        else if (isspace(c))
+        {
+            output << "ws";
+        }
+
+        else
+        {
+            output << c;
+        }
+
         counter++;
     }
 
