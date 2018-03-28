@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <cctype>
 
 using namespace std;
 
@@ -35,12 +36,15 @@ int main(int argc, char *argv[])
         return 2;
     }
 
+    // length of file name
     int length = stringlength(argv[1]);
-
     char newName[4 + length];
+
+    // append "new_" to beginning of original file name
     strcpy(newName, "new_");
     strcat(newName, argv[1]);
 
+    // open outfile with new name
     ofstream output (newName);
     if (!output)
     {
@@ -50,12 +54,18 @@ int main(int argc, char *argv[])
 
     // temporary character buffer
     char c;
+
+    // track no of characters read
     int counter = 0;
-    int tab = 0;
+
+    // value to indent blocks of code
+    // int tab = 0;
 
     // read one character at a time
     while (input >> c)
     {
+        // only 80 charachters per line
+        // only one include or define statement per line
         if (counter >= 80 || c == '#')
         {
             output << "\n";
@@ -63,46 +73,47 @@ int main(int argc, char *argv[])
             counter = 0;
         }
 
+        // opening and closing curly braces on new lines
         else if (c == '{' || c == '}')
         {
             if (c == '{')
             {
                 output << "\n";
-                tab++;
+                // tab++;
             }
-
+/*
             else
             {
                 tab--;
-            }
+            }*/
 
             output << c;
             output << "\n";
-
+/*
+            // indent blocks of code
             for (int i = 0, j = tab * 4; i < j; i++)
             {
                 output << " ";
-            }
+            }*/
 
             counter = 0;
         }
 
+        // only one statement per line
         else if (c == '>' || c == ';')
         {
             output << c;
             output << "\n";
-
+/*
             if (c == ';')
             {
-                for (int i = 0, j = tab * 4; i < j; i++)
-                {
-                    output << " ";
-                }
-            }
+                indent(output);
+            }*/
 
             counter = 0;
         }
 
+        // comments
         else if (c == '/')
         {
             char temp = c;
@@ -110,13 +121,18 @@ int main(int argc, char *argv[])
             if (c == '/')
             {
                 output << "\n";
+
+                // space first character after comments indicator "//"
                 output << temp << c << " ";
             }
 
             else if (c == '*')
             {
                 output << "\n";
-                output << temp << c << " \n" << "* ";
+
+                // begin multi-line comments on separte line from indicator "/*"
+                output << temp << c << " \n";
+                counter ++;
             }
 
             else
@@ -134,6 +150,8 @@ int main(int argc, char *argv[])
             if (c == '/')
             {
                 output << "\n";
+
+                // close muti-line comments with indicator on new line
                 output << temp << c << "\n";
             }
 
@@ -148,6 +166,12 @@ int main(int argc, char *argv[])
         else if (isspace(c))
         {
             output << "ws";
+        }
+
+        else if (isoperator(c))
+        {
+            cout << " " << c << " ";
+            counter += 2;
         }
 
         else
